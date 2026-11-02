@@ -1,0 +1,122 @@
+version: "2"
+
+run:
+  build-tags:
+    - integration
+
+formatters:
+  enable:
+    - gofumpt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/kukalajet/go-backend-template
+  exclusions:
+    generated: lax
+
+linters:
+  default: standard
+  enable:
+    - bodyclose
+    - contextcheck
+    - depguard
+    - errorlint
+    - exhaustive
+    - forcetypeassert
+    - gosec
+    - nilerr
+    - noctx
+    - nolintlint
+    - revive
+    - unparam
+    - usestdlibvars
+  settings:
+    nolintlint:
+      require-explanation: true
+      require-specific: true
+    depguard:
+      rules:
+        banned:
+          files:
+            - $all
+          deny:
+            - pkg: bou.ke/monkey
+              desc: replace dependencies through interfaces
+            - pkg: github.com/agiledragon/gomonkey
+              desc: replace dependencies through interfaces
+            - pkg: github.com/undefinedlabs/go-mpatch
+              desc: replace dependencies through interfaces
+        stdlib-only:
+          list-mode: strict
+          files:
+            - "**/internal/apperr/**"
+            - "**/migrations/**"
+            - "**/scripts/**"
+          allow:
+            - $gostd
+        domain:
+          list-mode: strict
+          files:
+            - "**/internal/domain/**"
+          allow:
+            - $gostd
+            - github.com/kukalajet/go-backend-template/internal/apperr
+            - github.com/google/uuid
+        application:
+          list-mode: strict
+          files:
+            - "**/internal/application/**"
+          allow:
+            - $gostd
+            - github.com/kukalajet/go-backend-template/internal/apperr
+            - github.com/kukalajet/go-backend-template/internal/domain
+        postgres:
+          list-mode: strict
+          files:
+            - "**/internal/postgres/**"
+            - "!$test"
+          allow:
+            - $gostd
+            - github.com/kukalajet/go-backend-template/internal/apperr
+            - github.com/kukalajet/go-backend-template/internal/application
+            - github.com/kukalajet/go-backend-template/internal/domain
+            - github.com/kukalajet/go-backend-template/internal/postgres/sqlcgen
+            - github.com/jackc/pgx/v5
+            - github.com/jackc/pgerrcode
+            - github.com/google/uuid
+        postgres-tests:
+          list-mode: strict
+          files:
+            - "**/internal/postgres/*_test.go"
+          allow:
+            - $gostd
+            - github.com/kukalajet/go-backend-template/internal/apperr
+            - github.com/kukalajet/go-backend-template/internal/application
+            - github.com/kukalajet/go-backend-template/internal/domain
+            - github.com/kukalajet/go-backend-template/internal/postgres
+            - github.com/kukalajet/go-backend-template/migrations
+            - github.com/jackc/pgx/v5
+            - github.com/jackc/pgerrcode
+            - github.com/google/uuid
+            - github.com/pressly/goose/v3
+        config:
+          list-mode: strict
+          files:
+            - "**/internal/config/**"
+          allow:
+            - $gostd
+            - github.com/caarlos0/env/v11
+        adapters:
+          list-mode: strict
+          files:
+            - "**/internal/httpapi/**"
+            - "**/internal/worker/**"
+          allow:
+            - $gostd
+            - github.com/kukalajet/go-backend-template/internal/apperr
+            - github.com/kukalajet/go-backend-template/internal/application
+            - github.com/kukalajet/go-backend-template/internal/domain
+            - github.com/kukalajet/go-backend-template/internal/worker
+  exclusions:
+    generated: lax
